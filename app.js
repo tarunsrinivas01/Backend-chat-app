@@ -12,7 +12,9 @@ const user=require('./models/user')
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
-app.use(cors());
+app.use(cors({
+  origin:"*"
+}));
 console.log("entered");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
