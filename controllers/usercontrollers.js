@@ -12,8 +12,8 @@ function isstringvalidate(string) {
   if (string == undefined || string.length === 0) return true;
   return false;
 }
-function generatetoken(id, ispremiumuser) {
-  return jwt.sign({ userid: id, ispremiumuser: ispremiumuser }, "Tarun@123");
+function generatetoken(id) {
+  return jwt.sign({ userid: id}, "Tarun@123");
 }
 
 exports.signup = async (req, res, next) => {
