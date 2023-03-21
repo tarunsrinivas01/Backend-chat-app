@@ -55,3 +55,39 @@ exports.signup = async (req, res, next) => {
     });
   }
 };
+exports.login=async(req,res,next)=>{
+  try {
+    const {email,password}=req.body
+    if(isstringvalidate(email)|| isstringvalidate(password))
+    {
+        return res.status(401).json({message:'something is missing'})
+    }
+    const users=await user.findAll({where:{email:email}})
+    // console.log(users)
+    if(users.length>0)
+        {
+            bcrypt.compare(password,users[0].password,(err,result)=>{
+            if(err)
+            {
+              return res.status(400).json({message:'something went wrong'})
+            }
+            if(result===true)
+            {
+                console.log(generatetoken(users[0].id))
+                return res.status(201).json({message:'user logged in','token':generatetoken(users[0].id)})
+            }
+            else{
+               return res.status(401).json({message:'password incorrect'})
+                 
+            }
+            })
+            
+        }
+    else{
+      return res.status(404).json({message:'user not found'})
+    }
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({message:error})
+  }
+}
