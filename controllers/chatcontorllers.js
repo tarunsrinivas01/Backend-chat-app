@@ -31,8 +31,16 @@ exports.postchat=async(req,res,next)=>{
     }
     const data=await chat.create({message:message,username:username,userId:req.user.id})
     console.log(data)
-    res.status(201).json({message:"sent",msgs:data})
+    res.status(201).json({message:"sent",userschat:data})
     } catch (error) {
         res.status(500).json({message:error})
+    }
+  }
+  exports.getmessages=async(req,res,next)=>{
+    const id=req.user.id
+    const data=await chat.findAll()
+    if(data.length>0)
+    {
+      return res.status(201).json({message:"success",userschat:data})
     }
   }
