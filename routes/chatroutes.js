@@ -5,6 +5,6 @@ const authorization=require('../middleware/authorization')
 
 const Router=express.Router()
 Router.post('/sendmessage',authorization.auth,controllers.postchat)
-Router.get('/getmessages',authorization.auth,controllers.getmessages)
+Router.get('/getmessages/:lastmsgid',controllers.getmessages)
 
-module.exports=Router
+module.exports=Router 
