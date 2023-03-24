@@ -24,6 +24,7 @@ exports.postchat = async (req, res, next) => {
     const message = req.body.chat;
     const username = req.user.name;
     const user = req.user;
+    const groupid=req.params.groupid
     console.log(user);
 
     if (isstringvalidate(message)) {
@@ -33,6 +34,7 @@ exports.postchat = async (req, res, next) => {
       message: message,
       username: username,
       userId: req.user.id,
+      groupId:groupid
     });
     console.log(data);
     res.status(201).json({ message: data});
@@ -43,12 +45,10 @@ exports.postchat = async (req, res, next) => {
 exports.getmessages = async (req, res, next) => {
   // const id = req.user.id;
   const lastmsgid=+req.params.lastmsgid||0;
-  // if(lastmsgid==undefined)
-  // {
-  //   lastmsgid=-1
-  // }
+  const groupid=req.params.groupid
   console.log(lastmsgid);
   const data = await chat.findAll({
+    groupId:groupid,
     offset:lastmsgid
   });
   if (data.length > 0) {
