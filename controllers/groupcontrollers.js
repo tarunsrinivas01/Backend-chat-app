@@ -6,7 +6,8 @@ const Group=require("../models/group")
 const usergroup=require("../models/usergroup")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const {Op}=require("sequelize")
+const {Op}=require("sequelize");
+const { group } = require("console");
 const app = express();
 
 function isstringvalidate(string) {
@@ -26,7 +27,7 @@ exports.creategroup=async(req,res,next)=>{
     }
 
     const data=await Group.create({groupname:groupname})
-    const usergrp=await usergroup.create({groupId:data.id,userId:req.user.id})
+    const usergrp=await usergroup.create({isadmin:true,groupId:data.id,userId:req.user.id})
     return res.status(201).json({message:data,usergrp:usergrp})
 
  } catch (error) {
@@ -36,6 +37,43 @@ exports.creategroup=async(req,res,next)=>{
 
 
 }
+exports.getusers = async (req, res, next) => {
+  const groupId =req.params.groupid;
+  console.log(">>>>>",groupId)
+  try {
+    const group = await Group.findByPk(groupId);
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found', success: false });
+    }
+    const users=await group.getUsers({
+      attributes:["name"]
+    })
+    console.log(">>>>>>>>",users)
+    res.status(200).json({ message: users, success: true });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: 'Something went wrong', success: false, error: err });
+  }
+};
+exports.makeadmin=async(req,res,next)=>{
+  const usergroupid=req.params.usergroupid
+
+ try {
+  const usrgrp=await usergroup.findByPk(usergroupid)
+
+  if(usrgrp.isadmin)
+  {
+    return res.status(400).json({message:"this user is already admin",success:false})
+  }
+  await usrgrp.update({isadmin:true})
+  res.status(201).json({message:"this user is now admin",success:true})
+ } catch (error) {
+  console.log(error)
+  res.status(500).json({message:"something went wrong",success:false})
+ }
+}
+
+
 exports.getAllGroups = async (req, res, next) => {
     try {
       const groupList = await Group.findAll({
@@ -64,9 +102,15 @@ exports.getAllGroups = async (req, res, next) => {
     try {
       const group = await Group.findByPk(groupId);
       const User = await user.findByPk(userId);
+
+      const isadmin=await usergroup.findOne({where:{groupId:groupId,isadmin:true,userId:req.user.id}})
         // console.log(group)
         // console.log(User)
-      if (!group || !User) {
+    if(!isadmin)
+    {
+        return res.status(400).json({ message: 'you are not allowed to add user', success: false });
+    }
+      else if (!group || !User) {
         return res.status(404).json({ message: 'Group or user not found', success: false });
       }
   
@@ -76,6 +120,22 @@ exports.getAllGroups = async (req, res, next) => {
     } catch (err) {
       console.log(err);
       return res.status(500).json({ message: 'Something went wrong', success: false, error: err });
+    }
+  }
+  exports.deletegroup=async(req,res,next)=>{
+    const groupid=+req.params.groupid
+    try {
+      const isadmin=await usergroup.findOne({where:{isadmin:true,groupId:groupid,userId:req.user.id}})
+    if(!isadmin)
+    {
+      return res.status(400).json({message:"you are not allowed to delete",success:false})
+    }
+    await Group.destroy({where:{id:groupid}})
+    await chat.destroy({where:{groupId:groupid}}) 
+    res.status(201).json({message:"group deleted",success:true})
+    } catch (error) {
+      console.log(error)
+      res.status(401).json({message:"something went wrong",success:false})
     }
   }
   
