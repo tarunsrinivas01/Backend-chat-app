@@ -14,6 +14,10 @@ const chats=require('./models/chat')
 const Group=require('./models/group')
 const usergroup=require('./models/usergroup')
 
+const fileupload=require('express-fileupload');
+
+app.use(fileupload());
+
 const bodyParser = require("body-parser");
 const cors = require("cors");
 

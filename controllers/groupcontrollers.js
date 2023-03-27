@@ -19,7 +19,6 @@ function isstringvalidate(string) {
 exports.creategroup=async(req,res,next)=>{
  try {
     const groupname=req.body.groupname
-    const username=req.user.username
 
     if(isstringvalidate(groupname))
     {
@@ -46,7 +45,7 @@ exports.getusers = async (req, res, next) => {
       return res.status(404).json({ message: 'Group not found', success: false });
     }
     const users=await group.getUsers({
-      attributes:["name"]
+      attributes:["name","id"]
     })
     console.log(">>>>>>>>",users)
     res.status(200).json({ message: users, success: true });
@@ -57,8 +56,13 @@ exports.getusers = async (req, res, next) => {
 };
 exports.makeadmin=async(req,res,next)=>{
   const usergroupid=req.params.usergroupid
-
+  const groupId=req.params.groupid
  try {
+  const isAdmin=await usergroup.findOne({where:{groupId:groupId,isadmin:true,userId:req.user.id}})
+  if(!isAdmin)
+  {
+    return res.status(400).json({message:"you are not allowed",success:false})
+  }
   const usrgrp=await usergroup.findByPk(usergroupid)
 
   if(usrgrp.isadmin)
@@ -76,15 +80,8 @@ exports.makeadmin=async(req,res,next)=>{
 
 exports.getAllGroups = async (req, res, next) => {
     try {
-      const groupList = await Group.findAll({
-        include: [
-            {
-              model: user,
-              where: { id: req.user.id },
-
-            },
-          ],
-      });
+      const user=req.user
+      const groupList=await user.getGroups()
       console.log(groupList)
   
       res.status(200).json({ message: groupList, success: true });
@@ -93,6 +90,34 @@ exports.getAllGroups = async (req, res, next) => {
       console.log(">>>>>>>>>", err);
       res.status(500).json({ message: "Something went Wrong", success: false, error: err });
     }
+  }
+  exports.removeadmin=async(req,res,next)=>{
+    const usergroupid=req.params.usergroupid
+    const groupId=req.params.groupid
+    console.log(">>>>>usergrpid",usergroupid)
+    console.log(">>>>>grpid",groupId)
+    try {
+      const isAdmin=await usergroup.findOne({where:{groupId:groupId,isadmin:true,userId:req.user.id}})
+      if(isAdmin.id==usergroupid)
+      {
+        return res.status(400).json({ message: 'you can perform operations on youself', success: false });
+      }
+      if(!isAdmin)
+      {
+        return res.status(400).json({ message: 'you are not allowed', success: false });
+      }
+      const usrgrp=await usergroup.findByPk(usergroupid)
+      if(!usrgrp.isadmin)
+      {
+        return res.status(400).json({message:"this user not a admin",success:false})
+      }
+      usrgrp.update({isadmin:false})
+      res.status(201).json({message:"removed admin access for user ",success:true})
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({message:"something went wrong",success:false})
+    }
+
   }
   exports.adduser=async (req, res) => {
     const groupId = req.params.groupId;

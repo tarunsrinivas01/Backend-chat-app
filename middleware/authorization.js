@@ -4,7 +4,7 @@ const User=require('../models/user')
 
 exports.auth=(req,res,next)=>{
    try {
-    const token=req.header('Authorisation')
+    const token=req.header('authorisation')
     const user=jwt.verify(token,'Tarun@123')
     console.log(user)
     User.findByPk(user.userid)

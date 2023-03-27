@@ -10,7 +10,8 @@ Router.get("/getall",authorization.auth,controllers.getAllGroups)
 Router.get("/getusers/:groupid",authorization.auth,controllers.getusers)
 Router.post('/adduser/:groupId/:userId', authorization.auth,controllers.adduser);
 Router.delete('/deletegroup/:groupid',authorization.auth,controllers.deletegroup)
-Router.post('/makeadmin/:usergroupid',controllers.makeadmin)
+Router.post('/makeadmin/:usergroupid/:groupid',authorization.auth,controllers.makeadmin)
+Router.post('/removeadmin/:usergroupid/:groupid',authorization.auth,controllers.removeadmin)
   
 
 
