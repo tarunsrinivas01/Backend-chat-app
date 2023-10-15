@@ -18,12 +18,11 @@ function generatetoken(id) {
 
 exports.signup = async (req, res, next) => {
   try {
-    const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
-    console.log(name);
+    console.log(req.body)
+    console.log(email);
     if (
-      isstringvalidate(name) ||
       isstringvalidate(email) ||
       isstringvalidate(password)
     ) {
@@ -32,7 +31,7 @@ exports.signup = async (req, res, next) => {
     const saltrounds = 10;
     bcrypt.hash(password, saltrounds, async (err, hash) => {
       try {
-        await user.create({ name, email, password: hash });
+        // await user.create({ name, email, password: hash });
         res
           .status(201)
           .json({ message: "successfully new user created", success: "true" });
