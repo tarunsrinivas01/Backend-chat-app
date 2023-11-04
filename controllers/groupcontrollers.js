@@ -1,14 +1,9 @@
-const express = require("express");
-const bodyParser = require("body-parser");
 const user = require("../models/user");
 const chat = require("../models/chat");
 const Group=require("../models/group")
 const usergroup=require("../models/usergroup")
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const {Op}=require("sequelize");
-const { group } = require("console");
-const app = express();
+
+
 
 function isstringvalidate(string) {
     if (string == undefined || string.length === 0) return true;
@@ -41,7 +36,7 @@ exports.getusers = async (req, res, next) => {
   console.log(">>>>>",groupId)
   try {
     const group = await Group.findByPk(groupId);
-    if (!group) {
+    if(!group) {
       return res.status(404).json({ message: 'Group not found', success: false });
     }
     const users=await group.getUsers({
@@ -100,7 +95,7 @@ exports.getAllGroups = async (req, res, next) => {
       const isAdmin=await usergroup.findOne({where:{groupId:groupId,isadmin:true,userId:req.user.id}})
       if(isAdmin.id==usergroupid)
       {
-        return res.status(400).json({ message: 'you can perform operations on youself', success: false });
+        return res.status(400).json({ message: 'you can"t perform operations on youself', success: false });
       }
       if(!isAdmin)
       {
@@ -156,7 +151,7 @@ exports.getAllGroups = async (req, res, next) => {
       return res.status(400).json({message:"you are not allowed to delete",success:false})
     }
     await Group.destroy({where:{id:groupid}})
-    await chat.destroy({where:{groupId:groupid}}) 
+    await chat.destroy({where:{groupId:groupid}})
     res.status(201).json({message:"group deleted",success:true})
     } catch (error) {
       console.log(error)

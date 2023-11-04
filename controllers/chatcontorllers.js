@@ -1,8 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const user = require("../models/user");
 const chat = require("../models/chat");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 // const AWS=require('aws-sdk');
 const UserGroup = require("../models/usergroup");
@@ -12,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 function isstringvalidate(string) {
-  if (string == undefined || string.length === 0) return true;
+  if(string == undefined || string.length === 0) return true;
   return false;
 }
 function generatetoken(id) {
@@ -44,7 +42,6 @@ exports.postchat = async (req, res, next) => {
   }
 };
 exports.getmessages = async (req, res, next) => {
-  // const id = req.user.id;
   const lastmsgid=+req.params.lastmsgid||0;
   const groupid=req.params.groupid
   console.log(lastmsgid);
@@ -58,9 +55,15 @@ exports.getmessages = async (req, res, next) => {
 };
 // function uploadToS3(file){
 
+<<<<<<< Updated upstream
 //   const BUCKET_NAME= 'expensetracker1';
 //   const IAM_USER_KEY= 'AKIAYQF6SJQJ26LSJ6UW';
 //   const  IAM_USER_SECRET= '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';
+=======
+  const BUCKET_NAME= 'expensetracker1';
+  const IAM_USER_KEY= process.env.IAM_USER_KEY
+  const  IAM_USER_SECRET= process.env.IAM_USER_SECRET
+>>>>>>> Stashed changes
 
 //   let s3bucket=new AWS.S3({
 //       accessKeyId: IAM_USER_KEY,

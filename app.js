@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express");
 const app = express();
 const sequelize = require("./database/db");
@@ -44,6 +45,7 @@ Group.belongsToMany(user,{through:usergroup})
 Group.hasMany(chats)
 chats.belongsTo(Group)
 
+<<<<<<< Updated upstream
 mongoose.connect("mongodb+srv://tarun:Tarun@6030@cluster0.f2bfhtn.mongodb.net/").catch((err)=>{
   if(err){
     console.log(err)
@@ -54,3 +56,9 @@ mongoose.connect("mongodb+srv://tarun:Tarun@6030@cluster0.f2bfhtn.mongodb.net/")
 })
 
 app.listen(3000)
+=======
+sequelize
+  .sync()
+  .then(app.listen(process.env.PORT||3000))
+  .catch((err) => console.log(err));
+>>>>>>> Stashed changes
