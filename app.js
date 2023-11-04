@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const sequelize = require("./database/db");
+const mongoose = require('mongoose')
 
 // routes
 const userroutes = require("./routes/userroutes");
@@ -43,7 +44,13 @@ Group.belongsToMany(user,{through:usergroup})
 Group.hasMany(chats)
 chats.belongsTo(Group)
 
-sequelize
-  .sync()
-  .then(app.listen(3000))
-  .catch((err) => console.log(err));
+mongoose.connect("mongodb+srv://tarun:Tarun@6030@cluster0.f2bfhtn.mongodb.net/").catch((err)=>{
+  if(err){
+    console.log(err)
+  }
+  else{
+    console.log('success')
+  }
+})
+
+app.listen(3000)
