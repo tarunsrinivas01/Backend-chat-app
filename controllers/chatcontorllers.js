@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const chat = require("../models/chat");
+const message = require("../models/messages");
 const jwt = require("jsonwebtoken");
 // const AWS=require('aws-sdk');
 const UserGroup = require("../models/usergroup");
@@ -21,22 +21,20 @@ exports.postchat = async (req, res, next) => {
   try {
     console.log(">>>>>>>>>>>>");
     const message = req.body.chat;
-    const username = req.user.name;
-    const user = req.user;
-    const groupid=req.params.groupid
-    console.log(user);
+    const sentFromId = req.user.userId;
+    const sentToId = req.body.sentToId
 
     if (isstringvalidate(message)) {
       return res.status(401).json({ message: "chat is missing" });
     }
-    const data = await chat.create({
-      message: message,
-      username: username,
-      userId: req.user.id,
-      groupId:groupid
-    });
-    console.log(data);
-    res.status(201).json({ message: data});
+
+    const newMessage = new message({
+      sentTo : sentToId,
+      sentFrom : sentFromId,
+      content : message
+    })
+    await newMessage.save()
+    res.status(201).json({ message: 'message sent successfully'});
   } catch (error) {
     res.status(500).json({ message: error });
   }
