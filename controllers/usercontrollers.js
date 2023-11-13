@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const user = require("../models/user");
+const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const app = express();
@@ -19,6 +19,7 @@ function generatetoken(id) {
 exports.signup = async (req, res, next) => {
   try {
     const email = req.body.email;
+    const userName = req.body.userName
     const password = req.body.password;
     console.log(req.body)
     console.log(email);
@@ -31,17 +32,16 @@ exports.signup = async (req, res, next) => {
     const saltrounds = 10;
     bcrypt.hash(password, saltrounds, async (err, hash) => {
       try {
-        // await user.create({ name, email, password: hash });
+        const newUser = new User({
+          email : email,
+          userName : userName,
+          password : hash
+        })
+        await newUser.save()
         res
           .status(201)
           .json({ message: "successfully new user created", success: "true" });
       } catch (err) {
-        if ((err.name = "SequelizeUniqueConstrainError")) {
-          err = "User Already Exists! please login";
-        } else {
-          err = "OOPS! something went wrong";
-        }
-        console.log(err)
         res.status(500).json({
           message: err,
         });
@@ -56,24 +56,26 @@ exports.signup = async (req, res, next) => {
 };
 exports.login=async(req,res,next)=>{
   try {
-    const {email,password}=req.body
+    const email = req.body.email
+    const password=req.body.password
     if(isstringvalidate(email)|| isstringvalidate(password))
     {
         return res.status(401).json({message:'something is missing'})
     }
-    const users=await user.findAll({where:{email:email}})
-    // console.log(users)
-    if(users.length>0)
+    const users=await User.find({email:email})
+    console.log(users)
+    if(users)
         {
             bcrypt.compare(password,users[0].password,(err,result)=>{
             if(err)
             {
-              return res.status(400).json({message:'something went wrong'})
+              console.log(err)
+              return res.status(400).json({message:err})
             }
-            if(result===true)
+            if(result)
             {
                 console.log(generatetoken(users[0].id))
-                return res.status(201).json({message:'user logged in','token':generatetoken(users[0].id)})
+                return res.status(201).json({message:'user logged in','token':generatetoken(users[0].email)})
             }
             else{
                return res.status(401).json({message:'password incorrect'})
@@ -89,4 +91,19 @@ exports.login=async(req,res,next)=>{
     console.log(error)
     return res.status(500).json({message:error})
   }
+}
+
+exports.getUsers = (req,res)=>{
+  try {
+    const user = req.user
+
+    const allUsers = User.find({email : {$ne: email} })
+   
+    if(allUsers>0) {
+      res.status(201).json({allUsers : allUsers})
+    }
+  } catch (error) {
+    res.status(500).json({error:error})
+  }
+  
 }

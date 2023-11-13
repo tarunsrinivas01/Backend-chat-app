@@ -1,7 +1,7 @@
 const sequelize=require('../database/db')
 const express=require('express')
 const controllers=require('../controllers/chatcontorllers')
-const authorization=require('../middleware/authorization')
+const authorization=require('../middleware/authentication')
 
 const Router=express.Router()
 Router.post('/sendmessage/:groupid',authorization.auth,controllers.postchat)

@@ -55,15 +55,9 @@ exports.getmessages = async (req, res, next) => {
 };
 // function uploadToS3(file){
 
-<<<<<<< Updated upstream
 //   const BUCKET_NAME= 'expensetracker1';
 //   const IAM_USER_KEY= 'AKIAYQF6SJQJ26LSJ6UW';
 //   const  IAM_USER_SECRET= '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';
-=======
-  const BUCKET_NAME= 'expensetracker1';
-  const IAM_USER_KEY= process.env.IAM_USER_KEY
-  const  IAM_USER_SECRET= process.env.IAM_USER_SECRET
->>>>>>> Stashed changes
 
 //   let s3bucket=new AWS.S3({
 //       accessKeyId: IAM_USER_KEY,

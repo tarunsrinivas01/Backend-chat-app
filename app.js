@@ -7,7 +7,6 @@ const mongoose = require('mongoose')
 // routes
 const userroutes = require("./routes/userroutes");
 const chatroutes=require("./routes/chatroutes")
-const grouproutes=require("./routes/grouproutes")
 
 
 // models
@@ -30,23 +29,22 @@ console.log("entered");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.use("/chat",chatroutes)
+// app.use("/chat",chatroutes)
 app.use("/user", userroutes);
-app.use("/group",grouproutes)
+// app.use("/group",grouproutes)
 
 
 // relations
-user.hasMany(chats)
-chats.belongsTo(user)
+// user.hasMany(chats)
+// chats.belongsTo(user)
 
-user.belongsToMany(Group,{through:usergroup})
-Group.belongsToMany(user,{through:usergroup})
+// user.belongsToMany(Group,{through:usergroup})
+// Group.belongsToMany(user,{through:usergroup})
 
-Group.hasMany(chats)
-chats.belongsTo(Group)
+// Group.hasMany(chats)
+// chats.belongsTo(Group)
 
-<<<<<<< Updated upstream
-mongoose.connect("mongodb+srv://tarun:Tarun@6030@cluster0.f2bfhtn.mongodb.net/").catch((err)=>{
+mongoose.connect("mongodb+srv://tarun:tarun@cluster0.uef6x77.mongodb.net/userDb?retryWrites=true&w=majority").catch((err)=>{
   if(err){
     console.log(err)
   }
@@ -56,9 +54,3 @@ mongoose.connect("mongodb+srv://tarun:Tarun@6030@cluster0.f2bfhtn.mongodb.net/")
 })
 
 app.listen(3000)
-=======
-sequelize
-  .sync()
-  .then(app.listen(process.env.PORT||3000))
-  .catch((err) => console.log(err));
->>>>>>> Stashed changes
